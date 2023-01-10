@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 
 const useAuth = (code) => {
@@ -23,6 +23,30 @@ const useAuth = (code) => {
             })
     }, [code]);
 
+    // refreshToken ก่อนถึงเวลา expire 1 นาที
+    useEffect(() => {
+        // ถ้าไม่มี 2 ตัวนี้ return ออกเลย
+        if (!refreshToken || !expireIn) return
+
+        // setTimeout run 1 ครั้ง
+        // setInterval run ทุกครั้งที่เกิด useEffect
+        const interval = setInterval(() => {
+            axios
+            .post("http://localhost:3001/refresh", {
+                refreshToken,
+            })
+            .then((res) => {
+                setAccessToken(res.data.accessToken);
+                setExpireIn(res.data.expireIn);
+            })
+            .catch(() => {
+                window.location = "/";
+            })
+        }, (expireIn - 60) * 1000)
+        return () => clearInterval(interval);
+        
+    }, [refreshToken, expireIn])
+    
     return accessToken;
 };
 
