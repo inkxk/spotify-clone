@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 
 const useAuth = (code) => {
@@ -28,8 +28,8 @@ const useAuth = (code) => {
         // ถ้าไม่มี 2 ตัวนี้ return ออกเลย
         if (!refreshToken || !expireIn) return
 
-        // setTimeout run 1 ครั้ง
-        // setInterval run ทุกครั้งที่เกิด useEffect
+        // setTimeout ทำงานได้แค่ครั้งเดียว
+        // setInterval ทำงานได้เรื่อยๆ เมื่อเรียก function
         const interval = setInterval(() => {
             axios
             .post("http://localhost:3001/refresh", {
